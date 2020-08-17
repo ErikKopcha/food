@@ -1,7 +1,7 @@
 window.addEventListener('DOMContentLoaded', () => {
 
   // tabs
-  
+
   const tabs = document.querySelectorAll('.tabheader__item');
   const tabsContent = document.querySelectorAll('.tabcontent');
   const tabsWrapper = document.querySelector('.tabheader__items');
@@ -49,10 +49,10 @@ window.addEventListener('DOMContentLoaded', () => {
     // получаем дату из строки Date.parse, получаем разницу между датами в млл
     // операция, которая рассчитывает оставшиеся время от deadline
     const t = Date.parse(endtime) - Date.parse(new Date()),
-          days = Math.floor(t / (1000 * 60 * 60 * 24)),
-          hours = Math.floor((t / (1000 * 60 * 60) % 24)),
-          minutes = Math.floor((t / 1000 / 60) % 60),
-          seconds = Math.floor((t / 1000) % 60);
+      days = Math.floor(t / (1000 * 60 * 60 * 24)),
+      hours = Math.floor((t / (1000 * 60 * 60) % 24)),
+      minutes = Math.floor((t / 1000 / 60) % 60),
+      seconds = Math.floor((t / 1000) % 60);
 
     return {
       'total': t,
@@ -74,11 +74,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
   function setClock(selector, endtime) {
     const timer = document.querySelector(selector),
-          days = timer.querySelector('#days'),
-          hours = timer.querySelector('#hours'),
-          minutes = timer.querySelector('#minutes'),
-          seconds = timer.querySelector('#seconds'),
-          timeInterval = setInterval(updateClock, 1000);
+      days = timer.querySelector('#days'),
+      hours = timer.querySelector('#hours'),
+      minutes = timer.querySelector('#minutes'),
+      seconds = timer.querySelector('#seconds'),
+      timeInterval = setInterval(updateClock, 1000);
 
     updateClock();
 
@@ -98,4 +98,46 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   setClock('.timer', deadline);
+
+  // modal
+
+  const modalTrigger = document.querySelectorAll('[data-modal]'),
+    modal = document.querySelector('.modal'),
+    modalCloseBtn = document.querySelectorAll('[data-close]');
+
+  modalTrigger.forEach(el => {
+    el.addEventListener('click', () => {
+      showModal();
+    });
+  });
+
+  modalCloseBtn.forEach(el => {
+    el.addEventListener('click', () => {
+      closeModal();
+    });
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape' && modal.classList.contains('show')) {
+      closeModal();
+    }
+  });
+
+  function showModal() {
+    modal.classList.add('show');
+    modal.classList.remove('hide');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('show');
+    modal.classList.add('hide');
+    document.body.style.overflow = '';
+  }
 });
