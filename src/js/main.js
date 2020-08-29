@@ -126,7 +126,9 @@ window.addEventListener('DOMContentLoaded', () => {
     modal.classList.remove('hide');
     document.body.style.overflow = 'hidden';
 
-    clearInterval(modalTimerId);
+    if (typeof modalTimerId !== 'undefined') {
+      clearInterval(modalTimerId);
+    }
   }
 
   function closeModal() {
@@ -231,4 +233,56 @@ window.addEventListener('DOMContentLoaded', () => {
     430,
     '.menu__field .container'
   ).render();
+
+  // forms
+  const forms = document.querySelectorAll('form');
+  const message = {
+    loading: 'Загрузка',
+    success: 'Спасибо! Скоро мы с Вами свяжемся',
+    failure: 'Что-то пошло не так'
+  };
+
+  forms.forEach(el => {
+    postData(el);
+  });
+
+  function postData(form) {
+    form.addEventListener('submit', (evt) => {
+      evt.preventDefault();
+
+      const statusMessage = document.createElement('div');
+      statusMessage.classList.add('status');
+      statusMessage.textContent = message.loading;
+      form.appendChild(statusMessage);
+
+      const request = new XMLHttpRequest();
+
+      request.open('POST', 'server.php');
+      request.setRequestHeader('Content-type', 'application/json');
+
+      const formData = new FormData(form);
+
+      const object = {};
+
+      formData.forEach(function(value, key) {
+        object[key] = value;
+      });
+
+      const json = JSON.stringify(object);
+
+      request.send(json);
+
+      request.addEventListener('load', () => {
+        if (request.status === 200) {
+          statusMessage.textContent = message.success;
+          form.reset();
+          setTimeout(() => {
+            statusMessage.remove();
+          }, 2000);
+        } else {
+          statusMessage.textContent = message.failure;
+        }
+      });
+    });
+  }
 });
