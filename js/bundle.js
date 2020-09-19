@@ -93,23 +93,24 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-window.addEventListener('DOMContentLoaded', function () {
-  const tabs = __webpack_require__(/*! ./modules/tabs */ "./src/js/modules/tabs.js"),
-        modal = __webpack_require__(/*! ./modules/modal */ "./src/js/modules/modal.js"),
-        timer = __webpack_require__(/*! ./modules/timer */ "./src/js/modules/timer.js"),
-        cards = __webpack_require__(/*! ./modules/cards */ "./src/js/modules/cards.js"),
-        calc = __webpack_require__(/*! ./modules/calcCall */ "./src/js/modules/calcCall.js"),
-        forms = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js"),
-        slider = __webpack_require__(/*! ./modules/slider-carousel */ "./src/js/modules/slider-carousel.js");
+window.addEventListener('DOMContentLoaded', function() {
+    const tabs = __webpack_require__(/*! ./modules/tabs */ "./src/js/modules/tabs.js"),
+          modal = __webpack_require__(/*! ./modules/modal */ "./src/js/modules/modal.js"),
+          timer = __webpack_require__(/*! ./modules/timer */ "./src/js/modules/timer.js"),
+          cards = __webpack_require__(/*! ./modules/cards */ "./src/js/modules/cards.js"),
+          calc = __webpack_require__(/*! ./modules/calcCall */ "./src/js/modules/calcCall.js"),
+          forms = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js"),
+          slider = __webpack_require__(/*! ./modules/slider-carousel */ "./src/js/modules/slider-carousel.js");
 
-  tabs();
-  modal();
-  timer();
-  cards();
-  calc();
-  forms();
-  slider();
+    tabs();
+    modal();
+    timer();
+    cards();
+    calc();
+    forms();
+    slider();
 });
+
 
 /***/ }),
 
@@ -123,10 +124,12 @@ window.addEventListener('DOMContentLoaded', function () {
 function calc() {
   // калькулятор калорий
   const result = document.querySelector('.calculating__result span');
+
   let sex, height, weight, age, ratio;
 
   function initLocalSettings(selector, activeClass) {
     const elem = document.querySelectorAll(selector);
+
     elem.forEach(el => {
       el.classList.remove(activeClass);
 
@@ -138,9 +141,9 @@ function calc() {
         el.classList.add(activeClass);
       }
     });
-  } // default settings
+  }
 
-
+  // default settings
   if (localStorage.getItem('sex')) {
     sex = localStorage.getItem('sex');
   } else {
@@ -165,9 +168,9 @@ function calc() {
     }
 
     if (sex === 'female') {
-      result.textContent = Math.round((47.6 + 9.2 * weight + 3.1 * height - 4.3 * age) * ratio);
+      result.textContent = Math.round((47.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio);
     } else {
-      result.textContent = Math.round((88.36 + 13.4 * weight + 4.8 * height - 5.7 * age) * ratio);
+      result.textContent = Math.round((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio);
     }
   }
 
@@ -175,8 +178,9 @@ function calc() {
 
   function getStaticInformation(selector, activeClass) {
     const elements = document.querySelectorAll(selector);
+
     elements.forEach(elem => {
-      elem.addEventListener('click', e => {
+      elem.addEventListener('click', (e) => {
         if (e.target.getAttribute('data-ratio')) {
           ratio = e.target.getAttribute('data-ratio');
           localStorage.setItem('ratio', e.target.getAttribute('data-ratio'));
@@ -188,8 +192,10 @@ function calc() {
         elements.forEach(elem => {
           elem.classList.remove(activeClass);
         });
+
         e.target.classList.add(activeClass);
-        calcTotal();
+
+        calcTotal()
       });
     });
   }
@@ -199,6 +205,7 @@ function calc() {
 
   function getDynamicInformation(selector) {
     const input = document.querySelector(selector);
+
     input.addEventListener('input', () => {
       // якщо буде введено не цифру, то помилка
       if (input.value.match(/\D/g)) {
@@ -211,11 +218,9 @@ function calc() {
         case 'height':
           height = +input.value;
           break;
-
         case 'weight':
           weight = +input.value;
           break;
-
         case 'age':
           age = +input.value;
           break;
@@ -243,6 +248,7 @@ module.exports = calc;
 
 function cards() {
   // Используем классы для создание карточек меню
+
   class MenuCard {
     constructor(src, alt, title, descr, price, parentSelector, ...classes) {
       this.src = src;
@@ -282,10 +288,9 @@ function cards() {
           `;
       this.parent.append(element);
     }
-
   }
 
-  const getResource = async url => {
+  const getResource = async (url) => {
     const res = await fetch(url);
 
     if (!res.ok) {
@@ -295,17 +300,18 @@ function cards() {
     return await res.json();
   };
 
-  getResource('http://localhost:3000/menu').then(data => {
-    data.forEach(({
-      img,
-      altimg,
-      title,
-      descr,
-      price
-    }) => {
-      new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+  getResource('http://localhost:3000/menu')
+    .then(data => {
+      data.forEach(({
+        img,
+        altimg,
+        title,
+        descr,
+        price
+      }) => {
+        new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+      })
     });
-  });
 }
 
 module.exports = cards;
@@ -327,6 +333,7 @@ function forms() {
     success: 'Спасибо! Скоро мы с вами свяжемся',
     failure: 'Что-то пошло не так...'
   };
+
   forms.forEach(item => {
     bindPostData(item);
   });
@@ -339,43 +346,54 @@ function forms() {
       },
       body: data
     });
+
     return await res.json();
   };
 
   function bindPostData(form) {
-    form.addEventListener('submit', e => {
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
+
       let statusMessage = document.createElement('img');
       statusMessage.src = message.loading;
       statusMessage.style.cssText = `
              display: block;
              margin: 0 auto;
          `;
-      form.insertAdjacentElement('afterend', statusMessage); // fetch
 
+      form.insertAdjacentElement('afterend', statusMessage);
+
+      // fetch
       const formData = new FormData(form);
+
       const object = {};
       formData.forEach(function (value, key) {
         object[key] = value;
-      }); // const json = JSON.stringify(Object.fromEntries(formData.entries()));
-
-      postData('http://localhost:3000/requests', JSON.stringify(object)).then(data => {
-        console.log(data);
-        showThanksModal(message.success);
-        statusMessage.remove();
-        form.reset();
-      }).catch(() => {
-        showThanksModal(message.failure);
-      }).finally(() => {
-        form.reset();
       });
+
+      // const json = JSON.stringify(Object.fromEntries(formData.entries()));
+
+      postData('http://localhost:3000/requests', JSON.stringify(object))
+        .then(data => {
+          console.log(data);
+
+          showThanksModal(message.success);
+          statusMessage.remove();
+          form.reset();
+        }).catch(() => {
+          showThanksModal(message.failure);
+        }).finally(() => {
+          form.reset();
+        });
     });
   }
 
   function showThanksModal(message) {
     const prevModalDialog = document.querySelector('.modal__dialog');
+
     prevModalDialog.classList.add('hide');
     openModal();
+
     const thanksModal = document.createElement('div');
     thanksModal.classList.add('modal__dialog');
     thanksModal.innerHTML = `
@@ -393,7 +411,9 @@ function forms() {
     }, 4000);
   }
 
-  fetch('http://localhost:3000/requests').then(data => data.json()).then(res => console.log(res));
+  fetch('http://localhost:3000/requests')
+    .then(data => data.json())
+    .then(res => console.log(res));
 }
 
 module.exports = forms;
@@ -409,8 +429,10 @@ module.exports = forms;
 
 function modal() {
   // Modal
+
   const modalTrigger = document.querySelectorAll('[data-modal]'),
-        modal = document.querySelector('.modal');
+    modal = document.querySelector('.modal');
+
   modalTrigger.forEach(btn => {
     btn.addEventListener('click', openModal);
   });
@@ -428,17 +450,20 @@ function modal() {
     clearInterval(modalTimerId);
   }
 
-  modal.addEventListener('click', e => {
+  modal.addEventListener('click', (e) => {
     if (e.target === modal || e.target.getAttribute('data-close') == "") {
       closeModal();
     }
   });
-  document.addEventListener('keydown', e => {
+
+  document.addEventListener('keydown', (e) => {
     if (e.code === "Escape" && modal.classList.contains('show')) {
       closeModal();
     }
   });
-  const modalTimerId = setTimeout(openModal, 300000); // Изменил значение, чтобы не отвлекало
+
+  const modalTimerId = setTimeout(openModal, 300000);
+  // Изменил значение, чтобы не отвлекало
 
   function showModalByScroll() {
     if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -446,7 +471,6 @@ function modal() {
       window.removeEventListener('scroll', showModalByScroll);
     }
   }
-
   window.addEventListener('scroll', showModalByScroll);
 }
 
@@ -464,16 +488,18 @@ module.exports = modal;
 function slider() {
   /////////////////////////////////////////////////////////////////////////////////// slider carousel
   const slides = document.querySelectorAll('.offer__slide'),
-        slider = document.querySelector('.offer__slider'),
-        prev = document.querySelector('.offer__slider-prev'),
-        next = document.querySelector('.offer__slider-next'),
-        total = document.querySelector('#total'),
-        current = document.querySelector('#current'),
-        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
-        slidesField = document.querySelector('.offer__slider-inner'),
-        width = window.getComputedStyle(slidesWrapper).width;
-  let slideIndex = 1; // чтобы знать отступ справа или слева
+    slider = document.querySelector('.offer__slider'),
+    prev = document.querySelector('.offer__slider-prev'),
+    next = document.querySelector('.offer__slider-next'),
+    total = document.querySelector('#total'),
+    current = document.querySelector('#current'),
+    slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+    slidesField = document.querySelector('.offer__slider-inner'),
+    width = window.getComputedStyle(slidesWrapper).width;
 
+  let slideIndex = 1;
+
+  // чтобы знать отступ справа или слева
   let offset = 0;
 
   if (slides.length < 10) {
@@ -482,22 +508,26 @@ function slider() {
   } else {
     total.textContent = `${slides.length}`;
     current.textContent = slideIndex;
-  } // устанавливаем ширину wrapper, чтобы помещались все слайдеры
+  }
 
-
+  // устанавливаем ширину wrapper, чтобы помещались все слайдеры
   slidesField.style.width = 100 * slides.length + `%`;
   slidesField.style.display = `flex`;
-  slidesField.style.transition = `all 0.4s ease`; // скрываем слайды
+  slidesField.style.transition = `all 0.4s ease`;
 
-  slidesWrapper.style.overflow = `hidden`; // устанавливаем ширину враппера для всех слайдов
+  // скрываем слайды
+  slidesWrapper.style.overflow = `hidden`;
 
+  // устанавливаем ширину враппера для всех слайдов
   slides.forEach(slide => {
     slide.style.width = width;
   });
-  slider.style.position = `relative`; // dots
 
+  slider.style.position = `relative`;
+
+  // dots
   const dots = document.createElement('ol'),
-        dotsArr = [];
+    dotsArr = [];
   dots.classList.add('carousel-dots');
   dots.style.cssText = `
  position: absolute;
@@ -511,6 +541,7 @@ function slider() {
  margin-left: 15%;
  list-style: none;
 `;
+
   slider.appendChild(dots);
 
   for (let i = 0; i < slides.length; i++) {
@@ -566,10 +597,11 @@ function slider() {
     dotsArr.forEach(dot => dot.style.opacity = `0.5`);
     dotsArr[slideIndex - 1].style.opacity = `1`;
   });
+
   prev.addEventListener('click', () => {
     // если отступ будет равен ширине одного слайда * количество слайдов - 1, то обнуляем
     if (offset === 0) {
-      offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+      offset = +width.slice(0, width.length - 2) * (slides.length - 1)
     } else {
       offset -= +width.slice(0, width.length - 2);
     }
@@ -591,11 +623,14 @@ function slider() {
     dotsArr.forEach(dot => dot.style.opacity = `0.5`);
     dotsArr[slideIndex - 1].style.opacity = `1`;
   });
+
   dotsArr.forEach(dot => {
-    dot.addEventListener('click', e => {
+    dot.addEventListener('click', (e) => {
       const slideTo = e.target.getAttribute('data-slide-to');
+
       slideIndex = slideTo;
       offset = +width.slice(0, width.length - 2) * (slideTo - 1);
+
       slidesField.style.transform = `translateX(-${offset}px)`;
 
       if (slides.length < 10) {
@@ -607,7 +642,9 @@ function slider() {
       dotsArr.forEach(dot => dot.style.opacity = `0.5`);
       dotsArr[slideIndex - 1].style.opacity = `1`;
     });
-  }); // slider basic
+  });
+
+  // slider basic
   //   const slides = document.querySelectorAll('.offer__slide'),
   //       prev = document.querySelector('.offer__slider-prev'),
   //       next = document.querySelector('.offer__slider-next'),
@@ -674,14 +711,16 @@ module.exports = slider;
 
 function tabs() {
   let tabs = document.querySelectorAll('.tabheader__item'),
-      tabsContent = document.querySelectorAll('.tabcontent'),
-      tabsParent = document.querySelector('.tabheader__items');
+    tabsContent = document.querySelectorAll('.tabcontent'),
+    tabsParent = document.querySelector('.tabheader__items');
 
   function hideTabContent() {
+
     tabsContent.forEach(item => {
       item.classList.add('hide');
       item.classList.remove('show', 'fade');
     });
+
     tabs.forEach(item => {
       item.classList.remove('tabheader__item_active');
     });
@@ -695,9 +734,9 @@ function tabs() {
 
   hideTabContent();
   showTabContent();
+
   tabsParent.addEventListener('click', function (event) {
     const target = event.target;
-
     if (target && target.classList.contains('tabheader__item')) {
       tabs.forEach((item, i) => {
         if (target == item) {
@@ -722,14 +761,16 @@ module.exports = tabs;
 
 function timer() {
   // Timer
+
   const deadline = '2021-05-14';
 
   function getTimeRemaining(endtime) {
     const t = Date.parse(endtime) - Date.parse(new Date()),
-          days = Math.floor(t / (1000 * 60 * 60 * 24)),
-          seconds = Math.floor(t / 1000 % 60),
-          minutes = Math.floor(t / 1000 / 60 % 60),
-          hours = Math.floor(t / (1000 * 60 * 60) % 24);
+      days = Math.floor((t / (1000 * 60 * 60 * 24))),
+      seconds = Math.floor((t / 1000) % 60),
+      minutes = Math.floor((t / 1000 / 60) % 60),
+      hours = Math.floor((t / (1000 * 60 * 60) % 24));
+
     return {
       'total': t,
       'days': days,
@@ -748,16 +789,19 @@ function timer() {
   }
 
   function setClock(selector, endtime) {
+
     const timer = document.querySelector(selector),
-          days = timer.querySelector("#days"),
-          hours = timer.querySelector('#hours'),
-          minutes = timer.querySelector('#minutes'),
-          seconds = timer.querySelector('#seconds'),
-          timeInterval = setInterval(updateClock, 1000);
+      days = timer.querySelector("#days"),
+      hours = timer.querySelector('#hours'),
+      minutes = timer.querySelector('#minutes'),
+      seconds = timer.querySelector('#seconds'),
+      timeInterval = setInterval(updateClock, 1000);
+
     updateClock();
 
     function updateClock() {
       const t = getTimeRemaining(endtime);
+
       days.innerHTML = getZero(t.days);
       hours.innerHTML = getZero(t.hours);
       minutes.innerHTML = getZero(t.minutes);
@@ -777,4 +821,4 @@ module.exports = timer;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=script.js.map
+//# sourceMappingURL=bundle.js.map
